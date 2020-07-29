@@ -1,7 +1,4 @@
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 1. Создать массив с набором слов (10-20 слов, должны встречаться повторяющиеся). Найти и вывести список уникальных слов,
@@ -21,11 +18,14 @@ import java.util.Map;
 public class Main {
     public static String[] data;
     public static Map<String, Integer> food;
+    public static HashSet<String> set;
 
     public static void main(String[] args) {
-        data = new String[] {"Apple", "Potato", "Watermelon", "Apple", "Orange", "Orange", "Banana", "Peach", "Apple",
+        data = new String[]{"Apple", "Potato", "Watermelon", "Apple", "Orange", "Orange", "Banana", "Peach", "Apple",
                 "Tomato", "Grape", "Grape", "Melon", "Strawberry", "Apple"};
+        findNumberOfRepeats();
         createUniqueArray();
+        System.out.println("\n***************\n");
         printMap();
 
         System.out.println("\n***************\n");
@@ -49,6 +49,26 @@ public class Main {
     }
 
     public static void createUniqueArray() {
+        HashSet<String> uniques = new HashSet<>();
+        HashSet<String> duplicates = new HashSet<>();
+
+        if (data != null) {
+            for (int i = 0; i < data.length; i++) {
+                if (!uniques.add(data[i])) {
+                    duplicates.add(data[i]);
+                }
+            }
+            uniques.removeAll(duplicates);
+
+            for (String str : uniques) {
+                System.out.println(str);
+            }
+        } else {
+            System.out.println("Empty data");
+        }
+    }
+
+    public static void findNumberOfRepeats() {
         food = new HashMap<>();
 
         for (int i = 0; i < data.length; i++) {
