@@ -16,6 +16,10 @@ public class ArrayCalc {
         }
     }
 
+    synchronized public long getTime() {
+        return System.currentTimeMillis();
+    }
+
     @Override
     public String toString() {
         return Arrays.toString(array);

@@ -66,7 +66,9 @@ public class Solution {
         ArrayCalc originalArray = new ArrayCalc(arr, 0);
         long startTime = System.currentTimeMillis();
         originalArray.calculate();
-        System.out.printf("Without multithreading calculate completed in %d ms.\n",System.currentTimeMillis() - startTime);
+        long completeTime = originalArray.getTime() - startTime;
+        System.out.printf("Without multithreading calculate completed in %d ms.\n",
+                completeTime);
     }
 
     public void doSynchronize() {
@@ -87,17 +89,13 @@ public class Solution {
         thread1.start();
         thread2.start();
 
-        try {
-            thread1.join();
-            thread2.join();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
         System.arraycopy(subArr1, 0, arr, 0, h);
         System.arraycopy(subArr2, 0, arr, h, size - h);
 
-        System.out.printf("With multithreading calculate completed in %d ms.\n", (System.currentTimeMillis() - startTime));
+        long completeTime = (a1.getTime() > a2.getTime()) ? (a1.getTime() - startTime) : (a2.getTime() - startTime);
+
+        System.out.printf("With multithreading calculate completed in %d ms.\n",
+                completeTime);
     }
 
     public static void main(String[] args) {
