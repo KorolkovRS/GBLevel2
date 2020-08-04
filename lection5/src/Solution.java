@@ -44,17 +44,15 @@ public class Solution {
     float[] arr = new float[size];
 
     public class MyRunnableClass implements Runnable {
-        float[] array;
-        int offset;
+        ArrayCalc array;
 
-        public MyRunnableClass(float[] array, int offset) {
+        public MyRunnableClass(ArrayCalc array) {
             this.array = array;
-            this.offset = offset;
         }
 
         @Override
         public void run() {
-            calculate(array, offset);
+            array.calculate();
         }
     }
 
@@ -64,22 +62,27 @@ public class Solution {
         }
     }
 
-    public void calculateWithoutMultithreading() {
-        long a = System.currentTimeMillis();
-        calculate(arr, 0);
-        System.out.printf("Without multithreading calculate completed in %d ms.\n", System.currentTimeMillis() - a);
+    public void doAsynchronously() {
+        ArrayCalc originalArray = new ArrayCalc(arr, 0);
+        long startTime = System.currentTimeMillis();
+        originalArray.calculate();
+        System.out.printf("Without multithreading calculate completed in %d ms.\n",System.currentTimeMillis() - startTime);
     }
 
-    public void calculateWithMultithreading() {
-        long a = System.currentTimeMillis();
-        float a1[] = new float[h];
-        float a2[] = new float[size - h];
+    public void doSynchronize() {
+        long startTime = System.currentTimeMillis();
 
-        System.arraycopy(arr, 0, a1, 0, h);
-        System.arraycopy(arr, h, a2, 0, size - h);
+        float subArr1[] = new float[h];
+        float subArr2[] = new float[size - h];
 
-        Thread thread1 = new Thread(new MyRunnableClass(a1, 0));
-        Thread thread2 = new Thread(new MyRunnableClass(a2, h));
+        System.arraycopy(arr, 0, subArr1, 0, h);
+        System.arraycopy(arr, h, subArr2, 0, size - h);
+
+        ArrayCalc a1 = new ArrayCalc(subArr1, 0);
+        ArrayCalc a2 = new ArrayCalc(subArr2, h);
+
+        Thread thread1 = new Thread(new MyRunnableClass(a1));
+        Thread thread2 = new Thread(new MyRunnableClass(a2));
 
         thread1.start();
         thread2.start();
@@ -91,29 +94,19 @@ public class Solution {
             e.printStackTrace();
         }
 
-        System.arraycopy(a1, 0, arr, 0, h);
-        System.arraycopy(a2, 0, arr, h, size - h);
-        System.out.printf("With multithreading calculate completed in %d ms.\n", System.currentTimeMillis() - a);
-    }
+        System.arraycopy(subArr1, 0, arr, 0, h);
+        System.arraycopy(subArr2, 0, arr, h, size - h);
 
-    private void calculate(float[] array, int offset) {
-        for (int i = 0; i < array.length; i++) {
-            array[i] = (float)(array[i] * Math.sin(0.2f + (i + offset) / 5) * Math.cos(0.2f + (i + offset) / 5)
-                    * Math.cos(0.4f + (i + offset) / 2));
-        }
+        System.out.printf("With multithreading calculate completed in %d ms.\n", (System.currentTimeMillis() - startTime));
     }
 
     public static void main(String[] args) {
         Solution solution = new Solution();
-        solution.fillDefault();
-        //System.out.println(Arrays.toString(solution.arr));
-        solution.calculateWithoutMultithreading();
-        //System.out.println(Arrays.toString(solution.arr));
 
         solution.fillDefault();
+        solution.doAsynchronously();
 
-        //System.out.println(Arrays.toString(solution.arr));
-        solution.calculateWithMultithreading();
-        //System.out.println(Arrays.toString(solution.arr));
+        solution.fillDefault();
+        solution.doSynchronize();
     }
 }
