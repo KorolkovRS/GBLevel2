@@ -89,13 +89,15 @@ public class Solution {
         thread1.start();
         thread2.start();
 
+        long copyStart = System.currentTimeMillis();
         System.arraycopy(subArr1, 0, arr, 0, h);
         System.arraycopy(subArr2, 0, arr, h, size - h);
+        long copyCompleteTime = System.currentTimeMillis() - copyStart;
 
         long completeTime = (a1.getTime() > a2.getTime()) ? (a1.getTime() - startTime) : (a2.getTime() - startTime);
 
         System.out.printf("With multithreading calculate completed in %d ms.\n",
-                completeTime);
+                completeTime + copyCompleteTime);
     }
 
     public static void main(String[] args) {
